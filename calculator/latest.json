@@ -1,11 +1,11 @@
 {
-  "version": "0.16.0",
-  "notes": "First release.",
-  "pub_date": "2026-11-12T20:26:02.383Z",
+  "version": "0.16.1",
+  "notes": "## Other changes\n\n- Upgrade Kana to 0.6.1",
+  "pub_date": "2026-11-12T21:09:28.443Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMGlkeXRRUjVjZWZKdGtKZm16SW5mb2t5QkFiSmh4Nk5zYnZWSDBxcFJ2ZW5QZjlTd2c0YnhJWmsvVytJNXgzeDlsUytiNzRUT1VGcUdZY2tLVE4zbXJkbFVCQm92T3dBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk0NTE1MTYxCWZpbGU6Q2FsY3VsYXRvcl8wLjE2LjBfeDY0LXNldHVwLmV4ZQl2ZXJzaW9uOjAuMTYuMApveVBhZnd1Rnc1ZzQ0L3hZTDB5SzFLVEpyVzRZYmVSZm5RVldhWDV4WC9jTzNaN3U0SWtSc2VtU1RGTFQ1R0xuZjVVYjhjY3lLSmNQaEthNGhPK2RDdz09Cg==",
-      "url": "https://github.com/kana-software/releases/releases/download/calculator-v0.16.0/calculator-0.16.0-x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMGlkeXRRUjVjZVVHRzNnM2NWYmd1cWFONDdQd1Nic241T3NDR2VGeWlTbERCMk1oMWl2OW9FRGxGYnRzdHI4ZWJoVWRyZEdEWUFvSlVMekRBU2xuOXhNVy9lT243VEFBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzk0NTE3NzY3CWZpbGU6Q2FsY3VsYXRvcl8wLjE2LjFfeDY0LXNldHVwLmV4ZQl2ZXJzaW9uOjAuMTYuMQpkTWlGK2tDY0VyQ2M2cWY3dHVXVGlTMFF5QlNaUkt1dGNQeTAzMnp0c0tHU3BBUy80M015S0VHeFhjU1pkR1JBTFdhS2NmOVlCbVBrcGdVanpRc1hDdz09Cg==",
+      "url": "https://github.com/kana-software/releases/releases/download/calculator-v0.16.1/calculator-0.16.1-x64-setup.exe"
     }
   }
 }
