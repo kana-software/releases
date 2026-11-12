@@ -1,0 +1,88 @@
+name: Release
+
+# Builds, signs and publishes one release of a Kana Software app. Run `pnpm release` in the app's
+# folder, which tags the app's commit and starts this with the app's repo and tag. App repos are
+# private, so the secrets every app's release needs live here, once. See Releasing an app in the
+# kana-dev AGENTS.md.
+run-name: Release ${{ inputs.repo }} ${{ inputs.tag }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: The app's repo in kana-software, such as calculator
+        required: true
+      tag:
+        description: The tag to release, such as v0.16.0
+        required: true
+
+# One release of an app at a time, so two runs never race to update its feed.
+concurrency: release-${{ inputs.repo }}
+
+permissions:
+  # Creates the release and updates the app's feed in this repo.
+  contents: write
+  # Installs the private Kana packages, which grant this repo read access.
+  packages: read
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: app
+    steps:
+      # The inputs reach the shell only through the environment, and must be a repo name and a version tag.
+      - name: Check the inputs
+        working-directory: .
+        env:
+          REPO: ${{ inputs.repo }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          [[ "$REPO" =~ ^[a-z][a-z0-9-]*$ ]] || { echo "::error::$REPO is not an app repo name"; exit 1; }
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::$TAG is not a version tag such as v1.2.3"; exit 1; }
+
+      - uses: actions/checkout@v7
+        with:
+          repository: kana-software/${{ inputs.repo }}
+          ref: refs/tags/${{ inputs.tag }}
+          token: ${{ secrets.KANA_SOURCE_TOKEN }}
+          # The release notes list the commits since the app's previous v* tag.
+          fetch-depth: 0
+          path: app
+
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: app/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
+          # Writes an .npmrc that sends NODE_AUTH_TOKEN to GitHub Packages.
+          registry-url: https://npm.pkg.github.com
+          scope: "@kana-software"
+      - run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Cargo fetches kana-tauri from the private Kana repo with the git CLI (.cargo/config.toml).
+      - name: Let git read the private repos
+        run: git config --global url."https://x-access-token:${KANA_SOURCE_TOKEN}@github.com/kana-software/".insteadOf "https://github.com/kana-software/"
+        env:
+          KANA_SOURCE_TOKEN: ${{ secrets.KANA_SOURCE_TOKEN }}
+
+      - run: pnpm check:rules
+      - run: pnpm check:dev
+
+      # Signs the installer for the updater with the Kana key.
+      - run: pnpm tauri build
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+      - run: pnpm exec kana-publish-release --tag "$TAG"
+        env:
+          TAG: ${{ inputs.tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
